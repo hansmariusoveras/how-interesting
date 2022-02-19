@@ -1,17 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Center, SlideFade, Input, SimpleGrid, useDisclosure } from '@chakra-ui/react'
 import axios from "axios";
-import Word from './Word';
+import WordCard from './WordCard';
+import WordSearcher from './WordSearcher';
+import Cookies from 'js-cookie';
 
 function App() {
     axios.defaults.xsrfHeaderName = "X-CSRFToken"; 
     axios.defaults.xsrfCookieName = "csrftoken";
-    const { isOpen, onOpen, onClose } = useDisclosure();
     const [words, setWords] = useState({});
-
-    const handleChange = (e) => {
-        (e.target.value === "") ? onClose() : onOpen();
-    }
 
     const remove = (word) => {
         let newWords = {...words};
@@ -19,17 +16,46 @@ function App() {
         setWords(newWords);
     }
 
+    async function getWordsFromCookie(wrds) {
+        let newWords = {};
+        for (let i=0; i < wrds.length; i++) {
+            let path = '/api/words/' + wrds[i] + '/';
+            await axios.get(path).then(
+                (res => {
+                    newWords[wrds[i]] = res.data.count;
+            }));
+        }
+        return newWords;
+    }
+
+    useEffect(() => {
+        if (Cookies.get('words') == null) {return;}
+        let wrds = JSON.parse(Cookies.get('words'));
+        if (wrds != null && wrds.length > 0) {
+            getWordsFromCookie(wrds).then((newWords) => { setWords(newWords)});
+            }
+            
+    }, [])
+
+    useEffect(() => {
+        if (Object.keys(words).length > 0) {
+        Cookies.set('words', JSON.stringify(Object.keys(words)), { expires: 30, sameSite: 'strict'});
+        }
+    }, [words])
+
     const submitWord = (e) => {
         e.preventDefault();
 
         let inputWord = e.target.elements.word.value.toLowerCase();
+        if (inputWord == "") {return;}
         let path = '/api/words/' + inputWord + '/';
         axios.get(path).then(
             (res => {
                 axios.put(path, {word: inputWord, count: res.data.count + 1});
                 let newWords = { ...words}
                 newWords[inputWord] = res.data.count + 1;
-                setWords(newWords);
+                setWords(newWords)
+
             })
         ).catch((err) => {
             axios.post(
@@ -40,9 +66,8 @@ function App() {
                     setWords(newWords);
                 })
         })
-        
+        e.target.elements.word.blur();
         e.target.reset();
-        onClose();
     }
 
     return (
@@ -50,16 +75,12 @@ function App() {
         <Center h='100vh'>
             <SimpleGrid columns={1} spacing={2}>
                 <form onSubmit={submitWord}>
-                    <Input name='word' onChange={handleChange} w='230px' placeholder="Hello" autoComplete='off'></Input>
-                    <SlideFade offsetY={-5} in={isOpen}>
-                        <Button type='submit' visibility={isOpen ? 'visible' : 'hidden'} transitionDuration='500ms' w='230px'>Search</Button>
-                    </SlideFade>
+                    <WordSearcher />
                 </form>
-                
             </SimpleGrid>
         </Center>
-        {Object.keys(words).map((word) =>
-            <Word key="word" word={word} count={words[word]} number={Object.keys(words).findIndex((s) => s == word)} remove={remove}/>
+        {Object.entries(words).map(([word, count], index) =>
+            <WordCard key={word} word={word} count={count} number={index} remove={remove}/>
         )}
         </>
     )

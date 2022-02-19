@@ -1,14 +1,18 @@
-import App from './App';
+import SearchPage from './SearchPage';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';
 import { ChakraProvider } from '@chakra-ui/react'
+import {
+  BrowserRouter,
+} from "react-router-dom";
+import PageRoutes from './PageRoutes';
 
 ReactDOM.render(
   <React.StrictMode>
-    <ChakraProvider>
-      <App />
-    </ChakraProvider>
+      <ChakraProvider>
+        <PageRoutes />
+      </ChakraProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
