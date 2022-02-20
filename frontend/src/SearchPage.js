@@ -72,7 +72,7 @@ function App() {
 
     return (
         <>
-        <Center h='100vh'>
+        <Center h='100%'>
             <SimpleGrid columns={1} spacing={2}>
                 <form onSubmit={submitWord}>
                     <WordSearcher />

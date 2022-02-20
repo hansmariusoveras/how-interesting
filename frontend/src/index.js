@@ -1,17 +1,17 @@
-import SearchPage from './SearchPage';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import reportWebVitals from './reportWebVitals';
-import { ChakraProvider } from '@chakra-ui/react'
-import {
-  BrowserRouter,
-} from "react-router-dom";
+import { Box, ChakraProvider } from '@chakra-ui/react'
 import PageRoutes from './PageRoutes';
+import PageHeader from 'PageHeader';
 
 ReactDOM.render(
   <React.StrictMode>
       <ChakraProvider>
-        <PageRoutes />
+        <PageHeader />
+        <Box height='calc(100vh - 100px)'>
+          <PageRoutes/>
+        </Box>
       </ChakraProvider>
   </React.StrictMode>,
   document.getElementById('root')

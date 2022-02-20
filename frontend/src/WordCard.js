@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Draggable from 'react-draggable';
 import { Text, Center, SimpleGrid, Box, IconButton, Icon, Button } from '@chakra-ui/react';
 import { ChatIcon, CloseIcon, DragHandleIcon } from '@chakra-ui/icons';
@@ -6,6 +6,13 @@ import { Link } from 'react-router-dom';
 
 function WordCard(props) {
     const { word, count, number, remove } = props;
+
+    const [screenSize, setScreenSize] = useState([window.innerWidth, window.innerHeight]);
+
+    useEffect(() => {
+        window.addEventListener('resize', () => setScreenSize([window.innerWidth, window.innerHeight]));
+    }, [])
+
     return (
         <Draggable key={word}>
             <SimpleGrid 
@@ -14,8 +21,8 @@ function WordCard(props) {
                 h='150px' 
                 textAlign='center' 
                 position='fixed'
-                top={window.innerHeight / 2 + (window.innerHeight*0.35)*Math.sin(number) - 150}
-                left={window.innerWidth / 2 + (window.innerWidth*0.35)*Math.cos(number) - 75}
+                top={screenSize.at(1) / 2 + (screenSize.at(1)*0.35)*Math.sin(number) - 150}
+                left={screenSize.at(0) / 2 + (screenSize.at(0)*0.35)*Math.cos(number) - 75}
                 bgColor='white'
                 columns={1}
             >
