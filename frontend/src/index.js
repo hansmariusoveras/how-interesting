@@ -5,13 +5,15 @@ import { Box, ChakraProvider } from '@chakra-ui/react'
 import PageRoutes from './PageRoutes';
 import PageHeader from 'PageHeader';
 import Cookies from 'js-cookie';
+import { BrowserRouter } from 'react-router-dom';
 
 ReactDOM.render(
   <React.StrictMode>
       <ChakraProvider>
-        {Cookies.get('token') != undefined ? <PageHeader /> : ''}
         <Box height='calc(100vh - 100px)'>
+        <BrowserRouter>
           <PageRoutes/>
+        </BrowserRouter>
         </Box>
       </ChakraProvider>
   </React.StrictMode>,

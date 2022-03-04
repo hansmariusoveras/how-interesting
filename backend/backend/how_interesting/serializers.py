@@ -8,14 +8,16 @@ class WordSerializer(serializers.ModelSerializer):
         fields = ('word', 'count')
 
 class MessageSerializer(serializers.ModelSerializer):
+    author = serializers.ReadOnlyField(source='author.username')
     class Meta:
         model = Message
         fields = ('author', 'time', 'text', 'word')
-        author = serializers.ReadOnlyField(source='author.username')
+        read_only_fields =('author',)
+        
+        
 
 class UserSerializer(serializers.ModelSerializer):
     messages = serializers.PrimaryKeyRelatedField(many=True, queryset=Message.objects.all())
-
     class Meta:
         model = User
-        fields = ['id', 'username', 'messages']
+        fields = ('id', 'username', 'messages')

@@ -1,16 +1,23 @@
 import { Center, Text, Input, VStack, Button, Link, Box} from '@chakra-ui/react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
 
+    const navigate = useNavigate();
     const login = (e) => {
         e.preventDefault();
         var data = {
             username: e.target.elements.username.value,
             password: e.target.elements.password.value
         }
-        axios.post('/api-token-auth/', data).then((res) => console.log(res.data));
+        axios.post('/api-token-auth/', data).then((res) => {
+            Cookies.set('token', res.data.token, { sameSite: 'strict'});
+            navigate('/start');
+        }
+            );
     }
 
     return (

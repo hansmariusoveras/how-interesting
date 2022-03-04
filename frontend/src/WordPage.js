@@ -31,19 +31,16 @@ function WordPage () {
         
     }
 
-    useEffect(() => {
-        refreshChat();
-    }, [messages])
-
     const makeChatMessage = (e) => {
         e.preventDefault();
-        let message = {
-            author: Cookies.get('username'),
+        const message = {
             text: e.target.elements.text.value,
             word: word
         }
-        
-        axios.post('/api/messages/', message);
+        const headers = {
+            Authorization: 'Token ' + Cookies.get('token')
+        }
+        axios.post('/api/messages/', message, {headers: headers}).then(() => refreshChat());
         setMessages([...messages, message]);
         e.target.reset();
     }
@@ -69,7 +66,7 @@ function WordPage () {
             <form onSubmit={makeChatMessage}>
                 <Box position='relative'>
                     <Button zIndex={12} position='absolute' right={0} type='submit'>Post</Button>
-                    <Input name='text' placeholder='Comment'></Input>
+                    <Input name='text' placeholder='Write a comment'></Input>
                 </Box>
                 
             </form>

@@ -1,20 +1,32 @@
+import { Center } from '@chakra-ui/react';
 import Cookies from 'js-cookie';
 import Login from 'Login';
+import PageHeader from 'PageHeader';
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import StartPage from 'StartPage';
 import SearchPage from './SearchPage';
 import WordPage from './WordPage';
 
 function PageRoutes () {
 
+    const navigate = useNavigate();
+
     return (
-        <BrowserRouter>
+        <>
+            {Cookies.get('token') != undefined ? <PageHeader /> : ''}
             <Routes>
-                <Route path='/word/:word' element={<WordPage />} />
-                <Route path='' element={Cookies.get('token') == undefined ? <Login /> :<SearchPage />} />
-                <Route path='/login' element={<Login />} />
+                {Cookies.get('token') != undefined ? <>
+                    <Route path='/word/:word' element={<WordPage />} />
+                    <Route path='/start' element={<SearchPage />} />
+                </> : 
+                <>
+                    <Route path='/login' element={<Login />} />
+                </>
+                }
+                <Route path='' element={<StartPage />} />
             </Routes>
-        </BrowserRouter>
+        </>
     )
 }
 
