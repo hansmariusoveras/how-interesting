@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include, re_path
 from rest_framework import routers
+from rest_framework.authtoken.views import obtain_auth_token
 from how_interesting import views
 
 router = routers.DefaultRouter()
@@ -12,5 +13,6 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('', views.default),
     re_path('^api/wordmessages/(?P<word>.+)/$', views.MessageList.as_view()),
-    path('res/', include('rest_framework.urls'))
+    path('res/', include('rest_framework.urls')),
+    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
 ]

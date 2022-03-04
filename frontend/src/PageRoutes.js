@@ -1,24 +1,18 @@
 import Cookies from 'js-cookie';
+import Login from 'Login';
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useNavigate } from 'react-router-dom';
 import SearchPage from './SearchPage';
 import WordPage from './WordPage';
 
 function PageRoutes () {
 
-    useEffect(() => {
-        if (Cookies.get('username')) {
-            return;
-        } else {
-            Cookies.set('username', window.prompt("Username?"));
-        }
-    }, [])
-    
     return (
         <BrowserRouter>
             <Routes>
                 <Route path='/word/:word' element={<WordPage />} />
-                <Route path='' element={<SearchPage />} />
+                <Route path='' element={Cookies.get('token') == undefined ? <Login /> :<SearchPage />} />
+                <Route path='/login' element={<Login />} />
             </Routes>
         </BrowserRouter>
     )

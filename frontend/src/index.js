@@ -4,11 +4,12 @@ import reportWebVitals from './reportWebVitals';
 import { Box, ChakraProvider } from '@chakra-ui/react'
 import PageRoutes from './PageRoutes';
 import PageHeader from 'PageHeader';
+import Cookies from 'js-cookie';
 
 ReactDOM.render(
   <React.StrictMode>
       <ChakraProvider>
-        <PageHeader />
+        {Cookies.get('token') != undefined ? <PageHeader /> : ''}
         <Box height='calc(100vh - 100px)'>
           <PageRoutes/>
         </Box>
