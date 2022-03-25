@@ -6,6 +6,11 @@ import WordSearcher from './WordSearcher';
 import Cookies from 'js-cookie';
 
 function App() {
+
+    const headers = {
+        Authorization: 'Token ' + Cookies.get('token')
+    }
+
     axios.defaults.xsrfHeaderName = "X-CSRFToken"; 
     axios.defaults.xsrfCookieName = "csrftoken";
     const [words, setWords] = useState({});
@@ -16,32 +21,12 @@ function App() {
         setWords(newWords);
     }
 
-    async function getWordsFromCookie(wrds) {
-        let newWords = {};
-        for (let i=0; i < wrds.length; i++) {
-            let path = '/api/words/' + wrds[i] + '/';
-            await axios.get(path).then(
-                (res => {
-                    newWords[wrds[i]] = res.data.count;
-            }));
-        }
-        return newWords;
-    }
-
     useEffect(() => {
-        if (Cookies.get('words') == null) {return;}
-        let wrds = JSON.parse(Cookies.get('words'));
-        if (wrds != null && wrds.length > 0) {
-            getWordsFromCookie(wrds).then((newWords) => { setWords(newWords)});
-            }
+        axios.get('/user_words', {headers: headers}).then((res) => {
+            setWords(res.data)
+        })
             
     }, [])
-
-    useEffect(() => {
-        if (Object.keys(words).length > 0) {
-        Cookies.set('words', JSON.stringify(Object.keys(words)), { expires: 30, sameSite: 'strict'});
-        }
-    }, [words])
 
     const submitWord = (e) => {
         e.preventDefault();
@@ -52,20 +37,19 @@ function App() {
         axios.get(path).then(
             (res => {
                 axios.put(path, {word: inputWord, count: res.data.count + 1});
-                let newWords = { ...words}
-                newWords[inputWord] = res.data.count + 1;
-                setWords(newWords)
 
             })
         ).catch((err) => {
             axios.post(
                 '/api/words/', 
                 {word: inputWord, count: 1}).then( (res) => {
-                    let newWords = { ...words}
+                    let newWords = {...words}
                     newWords[inputWord] = 1;
                     setWords(newWords);
                 })
         })
+
+        axios.post('/add_word', {word: inputWord}, {headers: headers})
         e.target.elements.word.blur();
         e.target.reset();
     }

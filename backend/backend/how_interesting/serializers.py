@@ -1,11 +1,10 @@
 from rest_framework import serializers
-from .models import Word, Message
-from django.contrib.auth.models import User
+from .models import RegistredUser, Word, Message
 
 class WordSerializer(serializers.ModelSerializer):
     class Meta:
         model = Word
-        fields = ('word', 'count')
+        fields = ('word')
 
 class MessageSerializer(serializers.ModelSerializer):
     author = serializers.ReadOnlyField(source='author.username')
@@ -16,8 +15,9 @@ class MessageSerializer(serializers.ModelSerializer):
         
         
 
-class UserSerializer(serializers.ModelSerializer):
+class RegistredUserSerializer(serializers.ModelSerializer):
     messages = serializers.PrimaryKeyRelatedField(many=True, queryset=Message.objects.all())
+    words = WordSerializer(read_only=True, many=True)
     class Meta:
-        model = User
-        fields = ('id', 'username', 'messages')
+        model = RegistredUser
+        fields = ('id', 'username', 'messages', 'words')

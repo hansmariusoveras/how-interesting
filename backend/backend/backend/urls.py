@@ -5,8 +5,9 @@ from rest_framework.authtoken.views import obtain_auth_token
 from how_interesting import views
 
 router = routers.DefaultRouter()
-router.register(r'words', views.WordView, 'word')
+
 router.register(r'messages', views.MessageView, 'message')
+router.register(r'words', views.WordView, 'word')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -15,5 +16,8 @@ urlpatterns = [
     re_path('^api/wordmessages/(?P<word>.+)/$', views.MessageList.as_view()),
     path('res/', include('rest_framework.urls')),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
-    path('get_username', views.GetUsername.as_view())
+    path('get_username', views.GetUsername.as_view()),
+    path('add_word', views.AddWordMember.as_view()),
+    path('user_words', views.UserWords.as_view())
+
 ]

@@ -137,3 +137,5 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',  # <-- And here
     ],
 }
+
+AUTH_USER_MODEL = 'how_interesting.RegistredUser'

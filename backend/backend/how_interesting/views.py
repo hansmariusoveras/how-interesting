@@ -7,14 +7,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .permissions import IsUser
-from .serializers import UserSerializer, WordSerializer, MessageSerializer
-from .models import Word, Message
+from .serializers import RegistredUserSerializer, WordSerializer, MessageSerializer
+from .models import RegistredUser, Word, Message
 from django.contrib.auth.models import User
 
-# Create your views here.
+
 class WordView(viewsets.ModelViewSet):
     serializer_class = WordSerializer
     queryset = Word.objects.all()
+
 
 class MessageView(viewsets.ModelViewSet):
     serializer_class = MessageSerializer
@@ -27,6 +28,7 @@ class MessageView(viewsets.ModelViewSet):
 def default(request):
     return HttpResponse("")
 
+
 class MessageList(generics.ListAPIView):
     model = Message
     serializer_class = MessageSerializer
@@ -36,10 +38,22 @@ class MessageList(generics.ListAPIView):
         return Message.objects.filter(word=word)
 
 class UserDetail(generics.RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+    queryset = RegistredUser.objects.all()
+    serializer_class = RegistredUserSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
 class GetUsername(APIView):
     def get(self, request, format=None):
         return Response(data={'username': self.request.user.username})
+
+class AddWordMember(APIView):
+    permission_classes = [IsUser]
+    def post(self, request, format=None):
+        user = RegistredUser.objects.get(username=self.request.user.username)
+        user.words.add(request.data['word'])
+        return Response(data={request.data['word']})
+
+class UserWords(APIView):
+    def get(self, request, format=None):
+        user = RegistredUser.objects.get(username=self.request.user.username)
+        return Response(data={w.word : w.registreduser_set.count() for w in user.words.all()})

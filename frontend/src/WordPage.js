@@ -49,7 +49,7 @@ function WordPage () {
     return (
         <>
         <Box position="absolute" right={0} top={0} padding='20px' marginTop='40px'>
-            <Link to="/"><Button size='lg'>Go back</Button></Link>
+            <Link to="/start"><Button size='lg'>Go back</Button></Link>
         </Box>
         <Center h='100%'>
         <SimpleGrid columns={1} margin='5px' w='700px'>
